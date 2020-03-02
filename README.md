@@ -1,6 +1,6 @@
 # E-SportsNode
 
-npm install yarn -g / 
+npm install yarn -g 
 
 yarn add express mongodb mongoose bcryptjs validator jsonwebtoken
 
