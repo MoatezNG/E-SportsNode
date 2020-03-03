@@ -30,7 +30,7 @@ router.get("/", async (req, res) => {
     const tournaments = await Tournament.find()
       .populate("teams")
       .populate("matchs")
-      .populate("matchs.teams");
+      .populate({ path: "matchs", populate: { path: "teams" } });
     res.json(tournaments);
   } catch (err) {
     res.json({ message: err });
