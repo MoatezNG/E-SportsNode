@@ -3,6 +3,11 @@ const validator = require("validator");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
+const roleEnum = Object.freeze({
+  SimpleUser: "SIMPLE",
+  TeamLeader: "TEAMLEADER"
+});
+
 const userSchema = mongoose.Schema({
   name: {
     type: String,
@@ -24,6 +29,10 @@ const userSchema = mongoose.Schema({
     type: String,
     required: true,
     minLength: 7
+  },
+  role: {
+    type: String,
+    enum: Object.values(roleEnum)
   },
   tokens: [
     {
@@ -65,7 +74,9 @@ userSchema.statics.findByCredentials = async (email, password) => {
   }
   return user;
 };
-
+Object.assign(userSchema.statics, {
+  roleEnum
+});
 const User = mongoose.model("User", userSchema);
 
 module.exports = User;
