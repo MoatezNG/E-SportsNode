@@ -9,6 +9,9 @@ const TournamentSchema = mongoose.Schema({
   },
   teams: [{ type: Schema.Types.ObjectId, ref: "Team" }],
   matchs: [{ type: Schema.Types.ObjectId, ref: "Match" }],
+  dateSeixiemeFinale: {
+    type: Date
+  },
   dateQuartFinale: {
     type: Date
   },
