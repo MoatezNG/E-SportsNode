@@ -4,6 +4,11 @@ const Team = require("../models/Team");
 const auth = require("../middleware/auth");
 const User = require("../models/User");
 
+router.get("/aaa", (req, res) => {
+  // example route for auth
+  res.json({ message: "Anyone can access(only authorized)" });
+});
+
 router.post("/create", auth, async (req, res) => {
   const team = new Team({
     teamName: req.body.teamName,
