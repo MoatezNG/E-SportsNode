@@ -9,8 +9,12 @@ const arr = [];
 module.exports = {
   matchSimulation: async function(req, res) {
     for (i = 0; i < 2; i++) {
+      let x = "";
+      if (i == 0) {
+        x = "win";
+      } else x = "fail";
       const teamInGame = new TeamInGame({
-        win: "Fail",
+        win: x,
         firstBlood: _.sample([true, false]),
         firstTower: _.sample([true, false]),
         firstInhibitor: _.sample([true, false]),
