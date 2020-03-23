@@ -1,9 +1,9 @@
 const express = require("express");
 const User = require("../models/User");
 const auth = require("../middleware/auth");
-
+const axios = require("axios");
 const router = express.Router();
-
+const request = require("request");
 router.post("/users", async (req, res) => {
   // Create a new user
   try {
@@ -60,6 +60,22 @@ router.post("/users/me/logoutall", auth, async (req, res) => {
   } catch (error) {
     res.status(500).send(error);
   }
+});
+
+router.get("/users/testApi", (req, res) => {
+  /*  let body = {}; */
+  request.get(
+    "https://euw1.api.riotgames.com/lol/summoner/v4/summoners/by-name/falloutshadw?api_key=RGAPI-db11bfe9-8ced-413c-b5fa-8f2944548868",
+    (error, response, body) => {
+      if (error) {
+        return console.dir(error);
+      }
+      bodi = JSON.parse(body);
+      console.log("statusCode:", response && response.statusCode);
+      res.json(bodi);
+    }
+  );
+  /* res.json(body); */
 });
 
 module.exports = router;
