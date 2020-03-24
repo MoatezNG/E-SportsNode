@@ -8,4 +8,4 @@ yarn add env-cmd nodemon --dev
 
 # bech tconsomi des api externe
 
-npm i request
+npm i axios
