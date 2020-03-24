@@ -1,11 +1,15 @@
 const Match = require("../models/Match");
 const TeamInGame = require("../models/TeamInGame");
+const Participant = require("../models/Participant");
+const DetailsInGame = require("../models/DetailsInGame");
 var _ = require("lodash");
 
 function between(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
 const arr = [];
+const arrParticipants = [];
+const arrdetails = [];
 module.exports = {
   matchSimulation: async function(req, res) {
     for (i = 0; i < 2; i++) {
@@ -51,6 +55,35 @@ module.exports = {
       const teams = await teamInGame.save();
       arr.push(teams);
     }
+    for (i = 0; i < 10; i++) {
+      const detailsinGame = new DetailsInGame({
+        item1: between(1, 200),
+        item2: between(1, 200),
+        item3: between(2, 200),
+        item4: between(3, 200),
+        item5: between(4, 200),
+        item6: between(0, 1),
+        kills: between(0, 20),
+        deaths: between(0, 20),
+        assists: between(0, 20),
+        champLevel: between(13, 18),
+        lane: "BOTTOM"
+      });
+      const saveddetails = await detailsinGame.save();
+      arrdetails.push(saveddetails);
+    }
+
+    for (j = 0; j < 10; j++) {
+      const participants = new Participant({
+        team: req.params.team1,
+        championId: between(100, 200),
+        spell1Id: between(1, 9),
+        spell2Id: between(1, 2),
+        stats: arrdetails[j]
+      });
+      const savedParticipants = await participants.save();
+      arrParticipants.push(savedParticipants);
+    }
 
     const match = new Match({
       DateStart: null,
@@ -61,7 +94,8 @@ module.exports = {
       seasonId: 13,
       gameMode: "CLASSIC",
       gameType: "COSTUM_GAME",
-      teamsIngame: arr
+      teamsIngame: arr,
+      participents: arrParticipants
     });
     match.teams.push(req.params.team1, req.params.team2);
     const savedmatch = await match.save();
@@ -72,7 +106,13 @@ module.exports = {
     try {
       const match = await Match.findById(req.params.matchId)
         .populate("teamsIngame")
-        .populate("teams");
+        .populate("teams")
+        .populate("participents")
+        .populate({
+          path: "participents",
+          populate: { path: "stats" }
+        });
+
       res.json(match);
     } catch (err) {
       res.json({ message: err });

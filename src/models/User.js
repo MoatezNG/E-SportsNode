@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const validator = require("validator");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const Schema = mongoose.Schema;
 
 const roleEnum = Object.freeze({
   SimpleUser: "SIMPLE",
@@ -41,7 +42,8 @@ const userSchema = mongoose.Schema({
         required: true
       }
     }
-  ]
+  ],
+  participants: [{ type: Schema.Types.ObjectId, ref: "Participant" }]
 });
 
 userSchema.pre("save", async function(next) {
