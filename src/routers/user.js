@@ -1,18 +1,36 @@
 const express = require("express");
 const User = require("../models/User");
 const auth = require("../middleware/auth");
-
+const axios = require("axios");
 const router = express.Router();
 
-router.post("/users", async (req, res) => {
+//check if the user have a league of legend acount
+async function sumonerNam(name) {
+  let response = await axios.get(
+    "https://euw1.api.riotgames.com/lol/summoner/v4/summoners/by-name/" +
+      name +
+      "?api_key=RGAPI-27a9b3dc-aa3f-4108-acbd-31a039e48350"
+  );
+  if (response.status == 200) {
+    return response.data.name;
+  }
+  return "";
+}
+router.post("/users/aa", async (req, res) => {
   // Create a new user
   try {
-    const user = new User(req.body);
-    await user.save();
-    const token = await user.generateAuthToken();
-    res.status(201).send({ user, token });
+    let sumonnerName = await sumonerNam(req.body.sumonnerName);
+    console.log(sumonnerName);
+    if (sumonnerName != "") {
+      const user = new User(req.body);
+      await user.save();
+      const token = await user.generateAuthToken();
+      res.status(201).send({ user, token });
+    } else {
+      res.status(400).send(error);
+    }
   } catch (error) {
-    res.status(400).send(error);
+    res.status(400).send("summoner not found");
   }
 });
 
@@ -62,4 +80,5 @@ router.post("/users/me/logoutall", auth, async (req, res) => {
   }
 });
 
+//test
 module.exports = router;

@@ -10,6 +10,11 @@ const roleEnum = Object.freeze({
 });
 
 const userSchema = mongoose.Schema({
+  sumonnerName: {
+    type: String,
+    required: true,
+    trim: true
+  },
   name: {
     type: String,
     required: true,
