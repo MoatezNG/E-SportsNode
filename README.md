@@ -9,3 +9,8 @@ yarn add env-cmd nodemon --dev
 # bech tconsomi des api externe
 
 npm i axios
+
+# bech ta3mel upload
+
+npm i fs
+npm i multer
