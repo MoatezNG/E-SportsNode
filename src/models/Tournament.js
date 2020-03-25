@@ -1,13 +1,8 @@
 const mongoose = require("mongoose");
-
 const Schema = mongoose.Schema;
 const TournamentSchema = mongoose.Schema({
   tournamentName: {
     type: String
-  },
-  tournamentPicture: {
-    type: String,
-    required: true
   },
   numberOfTeams: {
     type: Number

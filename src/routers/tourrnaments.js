@@ -3,14 +3,9 @@ const router = express.Router();
 const Tournament = require("../models/Tournament");
 const Match = require("../models/Match");
 const tournamentController = require("../controller/tournamentController");
-const storageFile = require("../db/storage");
 
 //create tournament
-router.post(
-  "/",
-  storageFile.upload.single("tournamentImage"),
-  tournamentController.createTournament
-);
+router.post("/", tournamentController.createTournament);
 
 //get teams that are participating to tournament
 router.get("/:tournamentId", tournamentController.teamParticpingTournament);
