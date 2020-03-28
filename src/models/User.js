@@ -41,7 +41,24 @@ const userSchema = mongoose.Schema({
         required: true
       }
     }
-  ]
+  ],
+  prename: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  picture: {
+    type: String
+  },
+  username: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  isactivated: {
+    type: Number,
+    default: 1
+  }
 });
 
 userSchema.pre("save", async function(next) {
@@ -61,6 +78,13 @@ userSchema.methods.generateAuthToken = async function() {
   await user.save();
   return token;
 };
+/*userSchema.methods.setIsActivated = async function() {
+  // set isactivated to 1 by default
+  const user = this;
+  const isactivated = 1;
+  await user.save();
+  return isactivated;
+};*/
 
 userSchema.statics.findByCredentials = async (email, password) => {
   // Search for a user by email and password.
