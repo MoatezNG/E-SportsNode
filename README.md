@@ -9,3 +9,7 @@ yarn add env-cmd nodemon --dev
 # bech tconsomi des api externe
 
 npm i axios
+
+# ZAWAAAAARDOOOOOOOOOOO
+
+npm i node-schedule

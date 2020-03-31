@@ -7,8 +7,10 @@ module.exports = {
       numberOfTeams: req.body.numberOfTeams,
       dateQuartFinale: req.body.dateQuartFinale,
       dateDemiFinale: req.body.dateDemiFinale,
-      dateFinale: req.body.dateFinale
+      dateFinale: req.body.dateFinale,
+      tournamentPicture: req.file.path
     });
+    console.log(req.file);
     const savedTournaments = await tournament.save();
     res.json(savedTournaments);
   },
