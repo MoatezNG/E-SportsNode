@@ -54,6 +54,7 @@ router.post("/users/login", async (req, res) => {
 router.get("/users/me", auth, async (req, res) => {
   // View logged in user profile
   res.send(req.user);
+  //console.log(req.user.isactivated);
 });
 
 router.post("/users/me/logout", auth, async (req, res) => {
@@ -75,6 +76,22 @@ router.post("/users/me/logoutall", auth, async (req, res) => {
     req.user.tokens.splice(0, req.user.tokens.length);
     await req.user.save();
     res.send();
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
+router.put("/users/me/updateprofile", auth, async (req, res) => {
+  try {
+    const updatedUser = await req.user.updateOne({ $set: req.body });
+    res.json(updatedUser);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
+router.put("/users/me/desactivate", auth, async (req, res) => {
+  try {
+    const updatedUser = await req.user.updateOne({ $set: { isactivated: 0 } });
+    res.json(updatedUser);
   } catch (error) {
     res.status(500).send(error);
   }
