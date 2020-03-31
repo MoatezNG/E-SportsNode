@@ -8,6 +8,13 @@ const tournamentRoute = require("./routers/tourrnaments");
 const notificationRoute = require("./routers/notification");
 const matchRoute = require("./routers/matchs");
 const bodyParser = require("body-parser");
+app.use(function(req, res, next) {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  res.setHeader("Access-Control-Allow-Credentials", true);
+  next();
+});
 var cors = require("cors");
 app.use(bodyParser.json());
 app.use("/team", teamRoute);

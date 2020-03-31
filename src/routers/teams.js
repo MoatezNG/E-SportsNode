@@ -34,12 +34,14 @@ router.patch("/:teamId/:userId", async (req, res) => {
   }
 });
 //get teambyTeamLeader
-router.get("/:teamL", async (req, res) => {
+router.get("/find/:teamL", async (req, res) => {
   try {
     const team = await Team.find({ teamLeader: req.params.teamL });
+    console.log(team);
     res.json(team);
   } catch (err) {
     res.json({ message: err });
+    console.log(team);
   }
 });
 module.exports = router;
