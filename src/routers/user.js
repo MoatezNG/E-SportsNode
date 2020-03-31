@@ -3,13 +3,15 @@ const User = require("../models/User");
 const auth = require("../middleware/auth");
 const axios = require("axios");
 const router = express.Router();
-
+var schedule = require("node-schedule");
 //check if the user have a league of legend acount
 async function sumonerNam(name) {
+  console.log(process.env.API_KEY);
   let response = await axios.get(
     "https://euw1.api.riotgames.com/lol/summoner/v4/summoners/by-name/" +
       name +
-      "?api_key=RGAPI-27a9b3dc-aa3f-4108-acbd-31a039e48350"
+      "?api_key=" +
+      process.env.API_KEY
   );
   if (response.status == 200) {
     return response.data.name;
@@ -79,6 +81,40 @@ router.post("/users/me/logoutall", auth, async (req, res) => {
     res.status(500).send(error);
   }
 });
+/* let startTime = new Date(Date.now() + 1000);
+let startTime2 = new Date(Date.now() + 15000); */
+
+/* let dates = [startTime, startTime2];
+date = new Date(Date.now() + 5000);
+var q = schedule.scheduleJob(date, function() {
+  let matchs = await Match.find({
+    DateStart: { $gte: new Date(Date.now()) }
+  });
+  dates = []
+  matchs.forEach(element=>{
+    dates.push(element.DateStart);
+  })
+  dates.forEach(element => {
+    let endTime = new Date(element.getTime() + 5000);
+    var j = schedule.scheduleJob(
+      { start: element, end: endTime, rule: "/1 * * * * *" },
+      function() {
+        console.log("test");
+      }
+    );
+  });
+});
+let x = "avant";
+
+dates.forEach(element => {
+  let endTime = new Date(element.getTime() + 5000);
+  var j = schedule.scheduleJob(
+    { start: element, end: endTime, rule: "/1 * * * * *" },
+    function() {
+      console.log("test");
+    }
+  );
+}); */
 
 //test
 module.exports = router;
