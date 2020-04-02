@@ -11,9 +11,13 @@ router.post(
   storageFile.upload.single("tournamentImage"),
   tournamentController.createTournament
 );
-
+//get tournament by id
+router.get("/:tournamentId", tournamentController.getTournamentById);
 //get teams that are participating to tournament
-router.get("/:tournamentId", tournamentController.teamParticpingTournament);
+router.get(
+  "/teams/:tournamentId",
+  tournamentController.teamParticpingTournament
+);
 
 //get all tournaments
 router.get("/", tournamentController.getTournament);

@@ -14,6 +14,15 @@ module.exports = {
     const savedTournaments = await tournament.save();
     res.json(savedTournaments);
   },
+  //get Tournament By Id
+  getTournamentById: async function(req, res) {
+    try {
+      const tournament = await Tournament.findById(req.params.tournamentId);
+      res.json(tournament);
+    } catch (error) {
+      res.json(error);
+    }
+  },
   //get All tournaments
   getTournament: async function(req, res) {
     try {

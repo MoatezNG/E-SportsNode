@@ -10,19 +10,22 @@ const roleEnum = Object.freeze({
 });
 
 const userSchema = mongoose.Schema({
+  userImage: {
+    type: String
+  },
   sumonnerName: {
     type: String,
-    required: true,
+
     trim: true
   },
   name: {
     type: String,
-    required: true,
+
     trim: true
   },
   email: {
     type: String,
-    required: true,
+
     unique: true,
     lowercase: true,
     validate: value => {
@@ -33,7 +36,7 @@ const userSchema = mongoose.Schema({
   },
   password: {
     type: String,
-    required: true,
+
     minLength: 7
   },
   role: {
@@ -50,7 +53,7 @@ const userSchema = mongoose.Schema({
   ],
   prename: {
     type: String,
-    required: true,
+
     trim: true
   },
   picture: {
@@ -58,7 +61,7 @@ const userSchema = mongoose.Schema({
   },
   username: {
     type: String,
-    required: true,
+
     trim: true
   },
   isactivated: {

@@ -15,8 +15,8 @@ const arrdetails = [];
 var date = new Date(Date.now() + 100000);
 let id = "5e61e3d35e83425f00a9a30c";
 
-var j = schedule.scheduleJob("*/59 * * * * *", async function() {
-  /*  console.log(matchs); */
+/* var j = schedule.scheduleJob("/*59 * * * * *", async function() {
+ 
   for (i = 0; i < 2; i++) {
     let x = "";
     if (i == 0) {
@@ -62,7 +62,7 @@ var j = schedule.scheduleJob("*/59 * * * * *", async function() {
   }
 
   try {
-    /*  console.log(new Date(Date.now())); */
+  
     const matchs = await Match.find({
       DateStart: { $gte: new Date(Date.now()) }
     });
@@ -72,7 +72,7 @@ var j = schedule.scheduleJob("*/59 * * * * *", async function() {
       console.log(element.DateStart < dateNow);
       if (element.DateStart.getTime() < dateNow) {
         console.log("a");
-        /*   const m = new Match(); */
+       
         const match = await Match.updateOne(
           { _id: "5e61e3d35e83425f00a9a30d" },
           {
@@ -91,11 +91,11 @@ var j = schedule.scheduleJob("*/59 * * * * *", async function() {
       }
     });
 
-    /* match.teams.push(match.teams[0], match.teams[1]); */
+    
 
     res.json(match);
   } catch (err) {}
-});
+}); */
 
 module.exports = {
   matchCreate: async function(req, res) {

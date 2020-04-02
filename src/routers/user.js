@@ -4,6 +4,8 @@ const auth = require("../middleware/auth");
 const axios = require("axios");
 const router = express.Router();
 var schedule = require("node-schedule");
+const storageFile = require("../db/storage");
+
 //check if the user have a league of legend acount
 async function sumonerNam(name) {
   console.log(process.env.API_KEY);
@@ -18,23 +20,33 @@ async function sumonerNam(name) {
   }
   return "";
 }
-router.post("/users/aa", async (req, res) => {
-  // Create a new user
-  try {
-    let sumonnerName = await sumonerNam(req.body.sumonnerName);
-    console.log(sumonnerName);
-    if (sumonnerName != "") {
-      const user = new User(req.body);
-      await user.save();
-      const token = await user.generateAuthToken();
-      res.status(201).send({ user, token });
-    } else {
+router.post(
+  "/users/aa",
+  storageFile.upload.single("userImage"),
+  async (req, res) => {
+    // Create a new user
+    try {
+      let sumonnerName = await sumonerNam(req.body.sumonnerName);
+      console.log(sumonnerName);
+      if (sumonnerName != "") {
+        const user = new User({
+          email: req.body.email,
+          username: req.body.username,
+          password: req.body.password,
+          userImage: req.file.path,
+          sumonnerName: req.body.sumonnerName
+        });
+        await user.save();
+        const token = await user.generateAuthToken();
+        res.status(201).send({ user, token });
+      } else {
+        res.status(400).send(error);
+      }
+    } catch (error) {
       res.status(400).send(error);
     }
-  } catch (error) {
-    res.status(400).send("summoner not found");
   }
-});
+);
 
 router.post("/users/login", async (req, res) => {
   //Login a registered user
