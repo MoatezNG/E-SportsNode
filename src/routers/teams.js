@@ -12,12 +12,14 @@ router.get("/aaa", (req, res) => {
 router.post("/create", auth, async (req, res) => {
   const team = new Team({
     teamName: req.body.teamName,
-    teamLeader: req.user
+    picture: req.body.picture,
+    teamLeader: req.user,
   });
   const savedTeam = await team.save();
   const updatedUser = await User.updateOne(
     { _id: team.teamLeader._id },
-    { $set: { role: User.roleEnum.TeamLeader } }
+    { $set: { teamOwned: savedTeam } },
+    { $push: { role: User.roleEnum.TeamLeader } }
   );
   res.json(savedTeam);
 });
@@ -38,7 +40,17 @@ router.get("/find/:teamL", async (req, res) => {
   try {
     const team = await Team.find({ teamLeader: req.params.teamL });
     console.log(team);
-    res.json(team);
+    res.json(team).populate("teamLeader");
+  } catch (err) {
+    res.json({ message: err });
+    console.log(team);
+  }
+});
+//getAllteams
+router.get("/getall", async (req, res) => {
+  try {
+    const teams = await Team.find().populate("members").populate("teamLeader");
+    res.json(teams);
   } catch (err) {
     res.json({ message: err });
     console.log(team);

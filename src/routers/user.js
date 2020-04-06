@@ -9,7 +9,7 @@ async function sumonerNam(name) {
   let response = await axios.get(
     "https://euw1.api.riotgames.com/lol/summoner/v4/summoners/by-name/" +
       name +
-      "?api_key=RGAPI-27a9b3dc-aa3f-4108-acbd-31a039e48350"
+      "?api_key=RGAPI-5c9ef8e7-ab6b-40e5-9c66-45ec112a36df"
   );
   if (response.status == 200) {
     return response.data.name;

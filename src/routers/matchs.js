@@ -9,4 +9,6 @@ router.post("/:team1/:team2", matchController.matchSimulation);
 
 router.get("/get/:matchId", matchController.getMatch);
 
+router.get("/getbyteam/:teamId", matchController.getMatchbsByTeamId);
+
 module.exports = router;

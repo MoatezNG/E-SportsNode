@@ -40,6 +40,8 @@ const userSchema = mongoose.Schema({
     type: String,
     enum: Object.values(roleEnum)
   },
+  teamOwned: { type: Schema.Types.ObjectId, ref: "Team" },
+
   tokens: [
     {
       token: {
@@ -50,7 +52,7 @@ const userSchema = mongoose.Schema({
   ],
   prename: {
     type: String,
-    required: true,
+
     trim: true
   },
   picture: {
@@ -58,7 +60,7 @@ const userSchema = mongoose.Schema({
   },
   username: {
     type: String,
-    required: true,
+
     trim: true
   },
   isactivated: {

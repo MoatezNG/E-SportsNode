@@ -2,16 +2,25 @@ const Match = require("../models/Match");
 const TeamInGame = require("../models/TeamInGame");
 const Participant = require("../models/Participant");
 const DetailsInGame = require("../models/DetailsInGame");
+const Champs = require("../helpers/champions");
+const Spells = require("../helpers/spells");
 var _ = require("lodash");
 
+Array.prototype.findByValueOfObject = function (key, value) {
+  return this.filter(function (item) {
+    return item[key] === value;
+  });
+};
 function between(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
-const arr = [];
-const arrParticipants = [];
-const arrdetails = [];
+
 module.exports = {
-  matchSimulation: async function(req, res) {
+  matchSimulation: async function (req, res) {
+    const arr = [];
+    const arrParticipants = [];
+    const arrParticipantsRed = [];
+    const arrdetails = [];
     for (i = 0; i < 2; i++) {
       let x = "";
       if (i == 0) {
@@ -28,28 +37,28 @@ module.exports = {
         towerKills: between(1, 11),
         inhibitorKills: between(1, 3),
         baronKills: between(1, 2),
-        dragonKills: between(1, 4)
+        dragonKills: between(1, 4),
       });
       teamInGame.bans.push(
         {
-          championId: between(100, 200),
-          pickTurn: 1
+          championId: _.sample(Champs.championsBans),
+          pickTurn: 1,
         },
         {
-          championId: between(100, 200),
-          pickTurn: 2
+          championId: _.sample(Champs.championsBans),
+          pickTurn: 2,
         },
         {
-          championId: between(100, 200),
-          pickTurn: 3
+          championId: _.sample(Champs.championsBans),
+          pickTurn: 3,
         },
         {
-          championId: between(100, 200),
-          pickTurn: 4
+          championId: _.sample(Champs.championsBans),
+          pickTurn: 4,
         },
         {
-          championId: between(100, 200),
-          pickTurn: 5
+          championId: _.sample(Champs.championsBans),
+          pickTurn: 5,
         }
       );
       const teams = await teamInGame.save();
@@ -67,22 +76,31 @@ module.exports = {
         deaths: between(0, 20),
         assists: between(0, 20),
         champLevel: between(13, 18),
-        lane: "BOTTOM"
+        lane: "BOTTOM",
       });
       const saveddetails = await detailsinGame.save();
       arrdetails.push(saveddetails);
     }
 
-    for (j = 0; j < 10; j++) {
+    for (j = 0; j < 5; j++) {
       const participants = new Participant({
-        team: req.params.team1,
-        championId: between(100, 200),
-        spell1Id: between(1, 9),
-        spell2Id: between(1, 2),
-        stats: arrdetails[j]
+        championId: _.sample(Champs.championsPicks),
+        spell1Id: _.sample(Spells.Spell1),
+        spell2Id: 4,
+        stats: arrdetails[j],
       });
       const savedParticipants = await participants.save();
       arrParticipants.push(savedParticipants);
+    }
+    for (j = 0; j < 5; j++) {
+      const participants = new Participant({
+        championId: _.sample(Champs.championsPicks),
+        spell1Id: _.sample(Spells.Spell1),
+        spell2Id: 4,
+        stats: arrdetails[j],
+      });
+      const savedParticipantsRed = await participants.save();
+      arrParticipantsRed.push(savedParticipantsRed);
     }
 
     const match = new Match({
@@ -95,27 +113,85 @@ module.exports = {
       gameMode: "CLASSIC",
       gameType: "COSTUM_GAME",
       teamsIngame: arr,
-      participents: arrParticipants
+      participentsBlue: {
+        team: req.params.team1,
+        part: arrParticipants,
+      },
+      participentsRed: {
+        team: req.params.team2,
+        part: arrParticipantsRed,
+      },
     });
     match.teams.push(req.params.team1, req.params.team2);
     const savedmatch = await match.save();
     res.json(savedmatch);
   },
   //getMatch
-  getMatch: async function(req, res) {
+  getMatch: async function (req, res) {
     try {
       const match = await Match.findById(req.params.matchId)
         .populate("teamsIngame")
-        .populate("teams")
-        .populate("participents")
-        .populate({
-          path: "participents",
-          populate: { path: "stats" }
-        });
+        .populate("teams");
+      // .populate("participents")
+      // .populate({
+      //   path: "participents",
+      //   populate: { path: "stats" },
+      // });
 
       res.json(match);
     } catch (err) {
       res.json({ message: err });
     }
-  }
+  },
+
+  //getMatchbsByTeamId
+  getMatchbsByTeamId: async function (req, res) {
+    try {
+      const match = await Match.find({ teams: { $in: [req.params.teamId] } })
+        .populate("teamsIngame")
+        .populate("teams")
+        .populate("participentsRed.part")
+        .populate("participentsRed.team")
+        .populate({
+          path: "participentsRed.team",
+          populate: {
+            path: "members",
+          },
+        })
+        .populate({
+          path: "participentsRed.team",
+          populate: {
+            path: "teamLeader",
+          },
+        })
+        .populate("participentsBlue.part")
+        .populate("participentsBlue.team")
+        .populate({
+          path: "participentsBlue.team",
+          populate: {
+            path: "members",
+          },
+        })
+        .populate({
+          path: "participentsBlue.team",
+          populate: {
+            path: "teamLeader",
+          },
+        });
+      // .populate({
+      //   path: "participents",
+      //   populate: {
+      //     path: "team",
+      //     populate: {
+      //       path: "members",
+      //       model: "User",
+      //     },
+      //   },
+      // });
+
+      res.json(match);
+    } catch (err) {
+      res.json({ message: err });
+    }
+  },
 };

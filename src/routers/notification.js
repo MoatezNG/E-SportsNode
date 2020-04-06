@@ -43,7 +43,17 @@ router.get("/get/:teamLeaderId", async (req, res) => {
           invite: Notification.inviteForChallengeEnum.Accepted
         }
       ]
-    }).populate("recevingLeader");
+    })
+      .populate("invitingLeader")
+      .populate({
+        path: "invitingLeader",
+        populate: { path: "teamOwned" }
+      })
+      .populate("recevingLeader")
+      .populate({
+        path: "recevingLeader",
+        populate: { path: "teamOwned" }
+      });
     console.log(notifications);
     res.json(notifications);
   } catch (err) {

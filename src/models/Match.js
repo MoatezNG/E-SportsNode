@@ -2,38 +2,49 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const MatchSchema = mongoose.Schema({
   DateStart: {
-    type: Date
+    type: Date,
   },
   platformId: {
-    type: String
+    type: String,
   },
   gameCreation: {
-    type: Number
+    type: Number,
   },
   gameDuration: {
-    type: Number
+    type: Number,
   },
   queueId: {
-    type: Number
+    type: Number,
   },
   seasonId: {
-    type: String
+    type: String,
   },
   gameMode: {
-    type: String
+    type: String,
   },
   gameType: {
-    type: String
+    type: String,
   },
   TypeOfMath: {
-    type: Number
+    type: Number,
   },
   teams: [{ type: Schema.Types.ObjectId, ref: "Team" }],
 
   teamsIngame: [{ type: Schema.Types.ObjectId, ref: "TeamInGame" }],
 
-  participents: [{ type: Schema.Types.ObjectId, ref: "Participant" }],
+  participentsBlue: [
+    {
+      team: { type: Schema.Types.ObjectId, ref: "Team" },
+      part: [{ type: Schema.Types.ObjectId, ref: "Participant" }],
+    },
+  ],
+  participentsRed: [
+    {
+      team: { type: Schema.Types.ObjectId, ref: "Team" },
+      part: [{ type: Schema.Types.ObjectId, ref: "Participant" }],
+    },
+  ],
 
-  TeamWining: { type: Schema.Types.ObjectId, ref: "Team" }
+  TeamWining: { type: Schema.Types.ObjectId, ref: "Team" },
 });
 module.exports = mongoose.model("Match", MatchSchema);
