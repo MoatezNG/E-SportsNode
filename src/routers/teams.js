@@ -14,20 +14,24 @@ router.post(
   storageFile.upload.single("teamImage"),
   auth,
   async (req, res) => {
-    const team = new Team({
-      teamName: req.body.teamName,
-      teamLeader: req.user,
-      teamImage: req.file.path
-    });
-    const savedTeam = await team.save();
-    const updatedUser = await User.updateOne(
-      { _id: team.teamLeader._id },
-      { $set: { role: User.roleEnum.TeamLeader } }
-    );
-    res.json(savedTeam);
+    try {
+      const team = new Team({
+        teamName: req.body.teamName,
+        teamLeader: req.user,
+        picture: req.file.path,
+      });
+      const savedTeam = await team.save();
+      const updatedUser = await User.updateOne(
+        { _id: team.teamLeader._id },
+        { $set: { role: User.roleEnum.TeamLeader } }
+      );
+      res.json(savedTeam);
+    } catch (error) {
+      res.status(400).send("problem");
+    }
   }
 );
-
+//give team leader position to another member
 router.patch("/:teamId/:userId", async (req, res) => {
   try {
     const updatedTeam = await Team.updateOne(
@@ -50,4 +54,30 @@ router.get("/find/:teamL", async (req, res) => {
     console.log(team);
   }
 });
+//update team
+/*router.put(
+  "/team/update",
+  storageFile.upload.single("teamImage"),
+  auth,
+  async (req, res) => {
+    try {
+      const updatedTeam = await req.team.updateOne({
+        $set: { description: req.body.description },
+        $set: { teamImage: req.file.path },
+      });
+      res.json(updatedTeam);
+    } catch (error) {
+      res.status(500).send(error);
+    }
+  }
+);
+//delete team
+router.delete("/team/delete", auth, async (req, res) => {
+  try {
+    const deletedTeam = await req.team.delete;
+    res.json("This team has been deleted");
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});*/
 module.exports = router;

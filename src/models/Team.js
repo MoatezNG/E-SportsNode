@@ -3,17 +3,20 @@ const Schema = mongoose.Schema;
 
 const TeamSchema = mongoose.Schema({
   teamName: {
-    type: String
+    type: String,
   },
   members: [{ type: Schema.Types.ObjectId, ref: "User" }],
   teamLeader: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User"
+    ref: "User",
   },
   picture: {
-    type: String
+    type: String,
   },
-  trophies: [{ type: Schema.Types.ObjectId, ref: "Trophies" }]
+  description: {
+    type: String,
+  },
+  trophies: [{ type: Schema.Types.ObjectId, ref: "Trophies" }],
 });
 
 const Team = mongoose.model("Team", TeamSchema);
