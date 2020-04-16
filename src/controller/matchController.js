@@ -98,7 +98,7 @@ let id = "5e61e3d35e83425f00a9a30c";
 }); */
 
 module.exports = {
-  matchCreate: async function(req, res) {
+  matchCreate: async function (req, res) {
     const match = await Match.updateOne(
       { _id: "5e61e3d35e83425f00a9a30c" },
       {
@@ -107,13 +107,13 @@ module.exports = {
           platformId: "EUW5",
           seasonId: 13,
           gameMode: "CLASSIC",
-          gameType: "COSTUM_GAME"
-        }
+          gameType: "COSTUM_GAME",
+        },
       }
     ).populate("teams");
     res.json(match);
   },
-  matchSimulation2: async function(req, res) {
+  matchSimulation2: async function (req, res) {
     for (i = 0; i < 2; i++) {
       let x = "";
       if (i == 0) {
@@ -130,28 +130,28 @@ module.exports = {
         towerKills: between(1, 11),
         inhibitorKills: between(1, 3),
         baronKills: between(1, 2),
-        dragonKills: between(1, 4)
+        dragonKills: between(1, 4),
       });
       teamInGame.bans.push(
         {
           championId: between(100, 200),
-          pickTurn: 1
+          pickTurn: 1,
         },
         {
           championId: between(100, 200),
-          pickTurn: 2
+          pickTurn: 2,
         },
         {
           championId: between(100, 200),
-          pickTurn: 3
+          pickTurn: 3,
         },
         {
           championId: between(100, 200),
-          pickTurn: 4
+          pickTurn: 4,
         },
         {
           championId: between(100, 200),
-          pickTurn: 5
+          pickTurn: 5,
         }
       );
       const teams = await teamInGame.save();
@@ -171,8 +171,8 @@ module.exports = {
             seasonId: 13,
             gameMode: "CLASSIC",
             gameType: "COSTUM_GAME",
-            teamsIngame: arr
-          }
+            teamsIngame: arr,
+          },
         }
       ).populate("teams");
       console.log(match);
@@ -192,7 +192,7 @@ module.exports = {
       console.log(err);
     }
   },
-  matchSimulation: async function(req, res) {
+  matchSimulation: async function (req, res) {
     for (i = 0; i < 2; i++) {
       let x = "";
       if (i == 0) {
@@ -209,28 +209,28 @@ module.exports = {
         towerKills: between(1, 11),
         inhibitorKills: between(1, 3),
         baronKills: between(1, 2),
-        dragonKills: between(1, 4)
+        dragonKills: between(1, 4),
       });
       teamInGame.bans.push(
         {
           championId: between(100, 200),
-          pickTurn: 1
+          pickTurn: 1,
         },
         {
           championId: between(100, 200),
-          pickTurn: 2
+          pickTurn: 2,
         },
         {
           championId: between(100, 200),
-          pickTurn: 3
+          pickTurn: 3,
         },
         {
           championId: between(100, 200),
-          pickTurn: 4
+          pickTurn: 4,
         },
         {
           championId: between(100, 200),
-          pickTurn: 5
+          pickTurn: 5,
         }
       );
       const teams = await teamInGame.save();
@@ -248,7 +248,7 @@ module.exports = {
         deaths: between(0, 20),
         assists: between(0, 20),
         champLevel: between(13, 18),
-        lane: "BOTTOM"
+        lane: "BOTTOM",
       });
       const saveddetails = await detailsinGame.save();
       arrdetails.push(saveddetails);
@@ -260,7 +260,7 @@ module.exports = {
         championId: between(100, 200),
         spell1Id: between(1, 9),
         spell2Id: between(1, 2),
-        stats: arrdetails[j]
+        stats: arrdetails[j],
       });
       const savedParticipants = await participants.save();
       arrParticipants.push(savedParticipants);
@@ -276,14 +276,14 @@ module.exports = {
       gameMode: "CLASSIC",
       gameType: "COSTUM_GAME",
       teamsIngame: arr,
-      participents: arrParticipants
+      participents: arrParticipants,
     });
     match.teams.push(req.params.team1, req.params.team2);
     const savedmatch = await match.save();
     res.json(savedmatch);
   },
   //getMatch
-  getMatch: async function(req, res) {
+  getMatch: async function (req, res) {
     try {
       const match = await Match.findById(req.params.matchId)
         .populate("teamsIngame")
@@ -291,12 +291,12 @@ module.exports = {
         .populate("participents")
         .populate({
           path: "participents",
-          populate: { path: "stats" }
+          populate: { path: "stats" },
         });
 
       res.json(match);
     } catch (err) {
       res.json({ message: err });
     }
-  }
+  },
 };

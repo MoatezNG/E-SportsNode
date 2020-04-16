@@ -4,6 +4,7 @@ const Team = require("../models/Team");
 const auth = require("../middleware/auth");
 const User = require("../models/User");
 const storageFile = require("../db/storage");
+
 router.get("/aaa", (req, res) => {
   // example route for auth
   res.json({ message: "Anyone can access(only authorized)" });
@@ -19,6 +20,7 @@ router.post(
         teamName: req.body.teamName,
         teamLeader: req.user,
         picture: req.file.path,
+        description: req.body.description,
       });
       const savedTeam = await team.save();
       const updatedUser = await User.updateOne(
@@ -54,30 +56,41 @@ router.get("/find/:teamL", async (req, res) => {
     console.log(team);
   }
 });
-//update team
-/*router.put(
-  "/team/update",
-  storageFile.upload.single("teamImage"),
-  auth,
-  async (req, res) => {
-    try {
-      const updatedTeam = await req.team.updateOne({
-        $set: { description: req.body.description },
-        $set: { teamImage: req.file.path },
+//update my team
+router
+  .route("/update/:id")
+  .put(storageFile.upload.single("picture"), (req, res, next) => {
+    Team.findByIdAndUpdate(
+      req.params.id,
+      {
+        $set: {
+          description: req.body.description,
+          picture: req.file.path,
+        },
+      },
+      (error, data) => {
+        if (error) {
+          return next(error);
+          console.log(error);
+        } else {
+          res.json(data);
+          console.log("Team successfully updated");
+        }
+      }
+    );
+  });
+//delete my team
+router.route("/delete/:id").delete((req, res, next) => {
+  Team.findByIdAndRemove(req.params.id, (error, data) => {
+    if (error) {
+      return next(error);
+    } else {
+      res.status(200).json({
+        msg: data,
       });
-      res.json(updatedTeam);
-    } catch (error) {
-      res.status(500).send(error);
     }
-  }
-);
-//delete team
-router.delete("/team/delete", auth, async (req, res) => {
-  try {
-    const deletedTeam = await req.team.delete;
-    res.json("This team has been deleted");
-  } catch (error) {
-    res.status(500).send(error);
-  }
-});*/
+  });
+});
+//add member to my team
+
 module.exports = router;

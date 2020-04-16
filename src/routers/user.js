@@ -34,7 +34,7 @@ router.post(
           username: req.body.username,
           password: req.body.password,
           userImage: req.file.path,
-          sumonnerName: req.body.sumonnerName
+          sumonnerName: req.body.sumonnerName,
         });
         await user.save();
         const token = await user.generateAuthToken();
@@ -59,6 +59,9 @@ router.post("/users/login", async (req, res) => {
         .send({ error: "Login failed! Check authentication credentials" });
     }
     const token = await user.generateAuthToken();
+    if (user.isactivated == 0) {
+      await user.updateOne({ $set: { isactivated: 1 } });
+    }
     res.send({ user, token });
   } catch (error) {
     res.status(400).send(error);
@@ -74,7 +77,7 @@ router.get("/users/me", auth, async (req, res) => {
 router.post("/users/me/logout", auth, async (req, res) => {
   // Log user out of the application
   try {
-    req.user.tokens = req.user.tokens.filter(token => {
+    req.user.tokens = req.user.tokens.filter((token) => {
       return token.token != req.token;
     });
     await req.user.save();
@@ -111,6 +114,17 @@ router.put("/users/me/desactivate", auth, async (req, res) => {
     res.status(500).send(error);
   }
 });
+//reinstaliser mot de passe
+
+//activate account
+/*router.put("/users/me/activate", auth, async (req, res) => {
+  try {
+    const updatedUser = await req.user.updateOne({ $set: { isactivated: 1 } });
+    res.json(updatedUser);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});*/
 
 /* let startTime = new Date(Date.now() + 1000);
 let startTime2 = new Date(Date.now() + 15000); */
