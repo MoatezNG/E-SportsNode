@@ -9,7 +9,15 @@ const TeamSchema = mongoose.Schema({
   teamLeader: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User"
-  }
+  },
+  picture: {
+    type: String
+  },
+  description:  {type: String},
+  trophies: [{ type: Schema.Types.ObjectId, ref: "Trophies" },
+ 
+]
 });
 
-module.exports = mongoose.model("Team", TeamSchema);
+const Team = mongoose.model("Team", TeamSchema);
+module.exports = Team;

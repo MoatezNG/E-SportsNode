@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const ParticipantSchema = mongoose.Schema({
-  team: [{ type: Schema.Types.ObjectId, ref: "Team" }],
+  team: { type: Schema.Types.ObjectId, ref: "Team" },
   championId: {
     type: Number
   },

@@ -3,12 +3,21 @@ const router = express.Router();
 const Tournament = require("../models/Tournament");
 const Match = require("../models/Match");
 const tournamentController = require("../controller/tournamentController");
+const storageFile = require("../db/storage");
 
 //create tournament
-router.post("/", tournamentController.createTournament);
-
+router.post(
+  "/",
+  storageFile.upload.single("tournamentImage"),
+  tournamentController.createTournament
+);
+//get tournament by id
+router.get("/:tournamentId", tournamentController.getTournamentById);
 //get teams that are participating to tournament
-router.get("/:tournamentId", tournamentController.teamParticpingTournament);
+router.get(
+  "/teams/:tournamentId",
+  tournamentController.teamParticpingTournament
+);
 
 //get all tournaments
 router.get("/", tournamentController.getTournament);

@@ -7,10 +7,21 @@ module.exports = {
       numberOfTeams: req.body.numberOfTeams,
       dateQuartFinale: req.body.dateQuartFinale,
       dateDemiFinale: req.body.dateDemiFinale,
-      dateFinale: req.body.dateFinale
+      dateFinale: req.body.dateFinale,
+      tournamentPicture: req.file.path
     });
+    console.log(req.file);
     const savedTournaments = await tournament.save();
     res.json(savedTournaments);
+  },
+  //get Tournament By Id
+  getTournamentById: async function(req, res) {
+    try {
+      const tournament = await Tournament.findById(req.params.tournamentId);
+      res.json(tournament);
+    } catch (error) {
+      res.json(error);
+    }
   },
   //get All tournaments
   getTournament: async function(req, res) {

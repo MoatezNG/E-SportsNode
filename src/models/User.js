@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const validator = require("validator");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const Schema = mongoose.Schema;
 
 const roleEnum = Object.freeze({
   SimpleUser: "SIMPLE",
@@ -9,14 +10,22 @@ const roleEnum = Object.freeze({
 });
 
 const userSchema = mongoose.Schema({
+  userImage: {
+    type: String
+  },
+  sumonnerName: {
+    type: String,
+
+    trim: true
+  },
   name: {
     type: String,
-    required: true,
+
     trim: true
   },
   email: {
     type: String,
-    required: true,
+
     unique: true,
     lowercase: true,
     validate: value => {
@@ -27,7 +36,7 @@ const userSchema = mongoose.Schema({
   },
   password: {
     type: String,
-    required: true,
+
     minLength: 7
   },
   role: {
@@ -41,7 +50,24 @@ const userSchema = mongoose.Schema({
         required: true
       }
     }
-  ]
+  ],
+  prename: {
+    type: String,
+
+    trim: true
+  },
+  picture: {
+    type: String
+  },
+  username: {
+    type: String,
+
+    trim: true
+  },
+  isactivated: {
+    type: Number,
+    default: 1
+  }
 });
 
 userSchema.pre("save", async function(next) {
@@ -61,6 +87,13 @@ userSchema.methods.generateAuthToken = async function() {
   await user.save();
   return token;
 };
+/*userSchema.methods.setIsActivated = async function() {
+  // set isactivated to 1 by default
+  const user = this;
+  const isactivated = 1;
+  await user.save();
+  return isactivated;
+};*/
 
 userSchema.statics.findByCredentials = async (email, password) => {
   // Search for a user by email and password.
