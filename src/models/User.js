@@ -6,71 +6,71 @@ const Schema = mongoose.Schema;
 
 const roleEnum = Object.freeze({
   SimpleUser: "SIMPLE",
-  TeamLeader: "TEAMLEADER"
+  TeamLeader: "TEAMLEADER",
 });
 
 const userSchema = mongoose.Schema({
   userImage: {
-    type: String
+    type: String,
   },
   sumonnerName: {
     type: String,
 
-    trim: true
+    trim: true,
   },
   name: {
     type: String,
 
-    trim: true
+    trim: true,
   },
   email: {
     type: String,
 
     unique: true,
     lowercase: true,
-    validate: value => {
+    validate: (value) => {
       if (!validator.isEmail(value)) {
         throw new Error({ error: "Invalid Email address" });
       }
-    }
+    },
   },
   password: {
     type: String,
 
-    minLength: 7
+    minLength: 7,
   },
   role: {
     type: String,
-    enum: Object.values(roleEnum)
+    enum: Object.values(roleEnum),
   },
   tokens: [
     {
       token: {
         type: String,
-        required: true
-      }
-    }
+        required: true,
+      },
+    },
   ],
   prename: {
     type: String,
 
-    trim: true
+    trim: true,
   },
   picture: {
-    type: String
+    type: String,
   },
   username: {
     type: String,
 
-    trim: true
+    trim: true,
   },
   isactivated: {
     type: Number,
-    default: 1
-  }
+    default: 1,
+  },
 });
 
-userSchema.pre("save", async function(next) {
+userSchema.pre("save", async function (next) {
   // Hash the password before saving the user model
   const user = this;
   if (user.isModified("password")) {
@@ -79,7 +79,7 @@ userSchema.pre("save", async function(next) {
   next();
 });
 
-userSchema.methods.generateAuthToken = async function() {
+userSchema.methods.generateAuthToken = async function () {
   // Generate an auth token for the user
   const user = this;
   const token = jwt.sign({ _id: user._id }, process.env.JWT_KEY);
@@ -108,7 +108,7 @@ userSchema.statics.findByCredentials = async (email, password) => {
   return user;
 };
 Object.assign(userSchema.statics, {
-  roleEnum
+  roleEnum,
 });
 const User = mongoose.model("User", userSchema);
 

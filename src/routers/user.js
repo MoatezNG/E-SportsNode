@@ -2,6 +2,7 @@ const express = require("express");
 const User = require("../models/User");
 const auth = require("../middleware/auth");
 const axios = require("axios");
+const bcrypt = require("bcryptjs");
 const router = express.Router();
 var schedule = require("node-schedule");
 const storageFile = require("../db/storage");
@@ -97,7 +98,7 @@ router.post("/users/me/logoutall", auth, async (req, res) => {
     res.status(500).send(error);
   }
 });
-
+//update user
 router.put("/users/me/updateprofile", auth, async (req, res) => {
   try {
     const updatedUser = await req.user.updateOne({ $set: req.body });
@@ -115,7 +116,60 @@ router.put("/users/me/desactivate", auth, async (req, res) => {
   }
 });
 //reinstaliser mot de passe
+/*router.put("/users/changepassword", auth, async (req, res) => {
+  try {
+    oldpassword = await bcrypt.hash(req.body.oldpassword, 8);
+    console.log(req.user.password);
+    console.log(oldpassword);
 
+    const isPasswordMatch = await bcrypt.compare(
+      oldpassword,
+      req.user.password
+    );
+    console.log(isPasswordMatch);
+    if (isPasswordMatch) {
+      const updatedUser = await req.user.updateOne({
+        $set: { password: req.body.password },
+      });
+      res.json(updatedUser);
+      console.log(req.body.password);
+    } else {
+      console.log("eerrrr");
+    }
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});*/
+router.route("/users/changepassword").put(auth, async (req, res, next) => {
+  // oldpassword = await bcrypt.hash(req.body.oldpassword, 8);
+  //console.log(req.user.password);
+  //console.log(oldpassword);
+
+  const isPasswordMatch = await bcrypt.compare(
+    req.body.oldpassword,
+    req.user.password
+  );
+  console.log(isPasswordMatch);
+  if (isPasswordMatch) {
+    User.findByIdAndUpdate(
+      req.user,
+      {
+        $set: {
+          password: req.body.password,
+        },
+      },
+      (error, data) => {
+        if (error) {
+          return next(error);
+          console.log(error);
+        } else {
+          res.json(data);
+          console.log("Team successfully updated");
+        }
+      }
+    );
+  }
+});
 //activate account
 /*router.put("/users/me/activate", auth, async (req, res) => {
   try {
