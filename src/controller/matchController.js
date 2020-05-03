@@ -5,6 +5,8 @@ const DetailsInGame = require("../models/DetailsInGame");
 const Champs = require("../helpers/champions");
 const Spells = require("../helpers/spells");
 var _ = require("lodash");
+const gameDuration = between(10000, 15000);
+const DateStart = Date.now();
 
 Array.prototype.findByValueOfObject = function (key, value) {
   return this.filter(function (item) {
@@ -16,7 +18,9 @@ function between(min, max) {
 }
 
 module.exports = {
-  matchSimulation: async function (req, res) {
+  gameDuration,
+  DateStart,
+  matchSimulation: async function (team1, team2) {
     const arr = [];
     const arrParticipants = [];
     const arrParticipantsRed = [];
@@ -25,6 +29,7 @@ module.exports = {
       let x = "";
       if (i == 0) {
         x = "win";
+        winingteam = _.sample([team1, team2]);
       } else x = "fail";
       const teamInGame = new TeamInGame({
         win: x,
@@ -97,35 +102,38 @@ module.exports = {
         championId: _.sample(Champs.championsPicks),
         spell1Id: _.sample(Spells.Spell1),
         spell2Id: 4,
-        stats: arrdetails[j],
+        stats: arrdetails[j + 5],
       });
       const savedParticipantsRed = await participants.save();
       arrParticipantsRed.push(savedParticipantsRed);
     }
 
     const match = new Match({
-      DateStart: null,
+      DateStart: DateStart,
       platformId: "EUW1",
       gameCreation: between(1000000000000, 1584940269561),
-      gameDuration: between(900, 3000),
+      gameDuration: gameDuration,
       queueId: between(100, 500),
       seasonId: 13,
       gameMode: "CLASSIC",
       gameType: "COSTUM_GAME",
       teamsIngame: arr,
       participentsBlue: {
-        team: req.params.team1,
+        team: team1,
         part: arrParticipants,
       },
       participentsRed: {
-        team: req.params.team2,
+        team: team2,
         part: arrParticipantsRed,
       },
+      TeamWining: winingteam,
     });
-    match.teams.push(req.params.team1, req.params.team2);
+    match.teams.push(team1, team2);
+    // await timeout(3000);
     const savedmatch = await match.save();
-    res.json(savedmatch);
+    console.log(savedmatch);
   },
+
   //getMatch
   getMatch: async function (req, res) {
     try {
@@ -150,6 +158,7 @@ module.exports = {
       const match = await Match.find({ teams: { $in: [req.params.teamId] } })
         .populate("teamsIngame")
         .populate("teams")
+        .populate("TeamWining")
         .populate("participentsRed.part")
         .populate("participentsRed.team")
         .populate({
@@ -164,12 +173,24 @@ module.exports = {
             path: "teamLeader",
           },
         })
+        .populate({
+          path: "participentsRed.part",
+          populate: {
+            path: "stats",
+          },
+        })
         .populate("participentsBlue.part")
         .populate("participentsBlue.team")
         .populate({
           path: "participentsBlue.team",
           populate: {
             path: "members",
+          },
+        })
+        .populate({
+          path: "participentsBlue.part",
+          populate: {
+            path: "stats",
           },
         })
         .populate({

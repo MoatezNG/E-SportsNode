@@ -3,23 +3,34 @@ const inviteForChallengeEnum = Object.freeze({
   Default: "DEFAULT",
   Pending: "PENDING",
   Accepted: "ACCEPTED",
-  Refused: "REFUSED"
+  Refused: "REFUSED",
 });
-const NotificationSchema = mongoose.Schema({
-  invitingLeader: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User"
+const NotificationSchema = mongoose.Schema(
+  {
+    invitingLeader: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+    recevingLeader: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+    invite: {
+      type: String,
+      enum: Object.values(inviteForChallengeEnum),
+    },
+    DateGame: {
+      type: Date,
+    },
+    Readed: {
+      type: Boolean,
+    },
   },
-  recevingLeader: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User"
-  },
-  invite: {
-    type: String,
-    enum: Object.values(inviteForChallengeEnum)
+  {
+    timestamps: true,
   }
-});
+);
 Object.assign(NotificationSchema.statics, {
-  inviteForChallengeEnum
+  inviteForChallengeEnum,
 });
 module.exports = mongoose.model("Notification", NotificationSchema);
