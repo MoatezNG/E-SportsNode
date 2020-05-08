@@ -95,14 +95,24 @@ router.post("/users/me/logoutall", auth, async (req, res) => {
   }
 });
 
-router.put("/users/me/updateprofile", auth, async (req, res) => {
-  try {
-    const updatedUser = await req.user.updateOne({ $set: req.body });
-    res.json(updatedUser);
-  } catch (error) {
-    res.status(500).send(error);
+//update user
+router.put(
+  "/users/me/updateprofile",
+  storageFile.upload.single("userImage"),
+  auth,
+  async (req, res) => {
+    try {
+      const updatedUser = await req.user.updateOne({
+        $set: { username: req.body.username, picture: req.file.path },
+      });
+      console.log(updatedUser);
+      res.json(updatedUser);
+    } catch (error) {
+      res.status(500).send(error);
+    }
   }
-});
+);
+
 router.put("/users/me/desactivate", auth, async (req, res) => {
   try {
     const updatedUser = await req.user.updateOne({ $set: { isactivated: 0 } });
@@ -111,7 +121,24 @@ router.put("/users/me/desactivate", auth, async (req, res) => {
     res.status(500).send(error);
   }
 });
-
+//find user
+router.get("/users/finduser/:username", async (req, res) => {
+  try {
+    const user = await User.find({ username: req.params.username });
+    res.json(user);
+  } catch (err) {
+    res.json({ message: err });
+  }
+});
+//get all users
+router.get("/users/all", async (req, res) => {
+  try {
+    const user = await User.find({ isactivated: 1 });
+    res.json(user);
+  } catch (err) {
+    res.json({ message: err });
+  }
+});
 /* let startTime = new Date(Date.now() + 1000);
 let startTime2 = new Date(Date.now() + 15000); */
 

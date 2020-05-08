@@ -64,4 +64,24 @@ router.get("/getall", async (req, res) => {
     console.log(team);
   }
 });
+//get my team
+router.get("/getmyteam", auth, async (req, res) => {
+  try {
+    const team = await Team.find({ teamLeader: req.user._id }).populate("members").populate("teamLeader");
+    console.log(team);
+    res.json(team);
+  } catch (err) {
+    res.json({ message: err });
+    console.log(team);
+  }
+});
+//delete team
+router.delete("/delete", auth, async (req, res) => {
+  try {
+    const team = await Team.findOneAndDelete({ teamLeader: req.user._id });
+    res.json("This team has been deleted");
+  } catch (error) {
+    res.status(500).send(error);
+  }
+})
 module.exports = router;
