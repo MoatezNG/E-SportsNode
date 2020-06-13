@@ -18,6 +18,9 @@ const TeamUserNotificationSchema = mongoose.Schema({
     type: String,
     enum: Object.values(inviteToTeamEnum),
   },
+  description: {
+    type: String,
+  },
 });
 Object.assign(TeamUserNotificationSchema.statics, {
   inviteToTeamEnum,

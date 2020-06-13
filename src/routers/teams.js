@@ -4,12 +4,11 @@ const Team = require("../models/Team");
 const auth = require("../middleware/auth");
 const User = require("../models/User");
 const storageFile = require("../db/storage");
-
 router.get("/aaa", (req, res) => {
   // example route for auth
   res.json({ message: "Anyone can access(only authorized)" });
 });
-
+//add team
 router.post(
   "/create",
   storageFile.upload.single("teamImage"),
@@ -56,41 +55,53 @@ router.get("/find/:teamL", async (req, res) => {
     console.log(team);
   }
 });
-//update my team
-router
-  .route("/update/:id")
-  .put(storageFile.upload.single("picture"), (req, res, next) => {
-    Team.findByIdAndUpdate(
-      req.params.id,
-      {
-        $set: {
-          description: req.body.description,
-          picture: req.file.path,
-        },
-      },
-      (error, data) => {
-        if (error) {
-          return next(error);
-          console.log(error);
-        } else {
-          res.json(data);
-          console.log("Team successfully updated");
-        }
-      }
-    );
-  });
-//delete my team
-router.route("/delete/:id").delete((req, res, next) => {
-  Team.findByIdAndRemove(req.params.id, (error, data) => {
-    if (error) {
-      return next(error);
-    } else {
-      res.status(200).json({
-        msg: data,
-      });
-    }
-  });
+//get my team
+router.get("/getmyteam", auth, async (req, res) => {
+  try {
+    const team = await Team.find({ teamLeader: req.user._id });
+    console.log(team);
+    res.json(team);
+  } catch (err) {
+    res.json({ message: err });
+    console.log(team);
+  }
 });
-//add member to my team
-
+//update team
+router.put(
+  "/update/:teamId",
+  storageFile.upload.single("teamImage"),
+  auth,
+  async (req, res) => {
+    try {
+      const updatedTeam = await req.team.updateOne(
+        { _id: req.params.teamId },
+        {
+          $set: { description: req.body.description, picture: req.file.path },
+        }
+      );
+      res.json(updatedTeam);
+    } catch (error) {
+      res.status(500).send(error);
+    }
+  }
+);
+//delete team
+router.delete("/delete", auth, async (req, res) => {
+  try {
+    const team = await Team.findOneAndDelete({ teamLeader: req.user._id });
+    res.json("This team has been deleted");
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
+//delete member from team
+router.delete("/delete/:userId", auth, async (req, res) => {
+  try {
+    const team = await Team.findByIdAndUpdate({ teamLeader: req.user._id });
+    team.members.findOneAndDelete({ user: req.params.userId });
+    res.json("This user has been deleted from your team");
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
 module.exports = router;
