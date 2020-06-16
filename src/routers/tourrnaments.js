@@ -4,7 +4,7 @@ const Tournament = require("../models/Tournament");
 const Match = require("../models/Match");
 const tournamentController = require("../controller/tournamentController");
 const storageFile = require("../db/storage");
-
+const auth = require("../middleware/auth");
 //create tournament
 router.post(
   "/",
@@ -18,7 +18,14 @@ router.get(
   "/teams/:tournamentId",
   tournamentController.teamParticpingTournament
 );
-
+//get my Tournament
+router.get("/my/Tournament", auth, tournamentController.getMyTournament);
+//Add team to tournament
+router.get(
+  "/:teamId/:tournamentId",
+  auth,
+  tournamentController.addTeamToTournament
+);
 //get all tournaments
 router.get("/", tournamentController.getTournament);
 
@@ -28,10 +35,11 @@ router.patch("/:tournamentId", tournamentController.createFirstMatchs);
 //Create next Matchs
 router.patch("/next/:tournamentId", tournamentController.creatNextMatch);
 
-//Add team to tournament
-router.patch(
-  "/:teamId/:tournamentId",
-  tournamentController.addTeamToTournament
+//update a tournament
+router.put(
+  "/updateTournamen/:tournamentId",
+
+  tournamentController.updateTournament
 );
 
 module.exports = router;

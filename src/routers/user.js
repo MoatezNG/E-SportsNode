@@ -1,5 +1,6 @@
 const express = require("express");
 const User = require("../models/User");
+const Match = require("../models/Match");
 const auth = require("../middleware/auth");
 const axios = require("axios");
 const router = express.Router();
@@ -22,26 +23,26 @@ async function sumonerNam(name) {
 }
 router.post(
   "/users/aa",
-  storageFile.upload.single("userImage"),
+  /*  storageFile.upload.single("userImage"), */
   async (req, res) => {
     // Create a new user
     try {
-      let sumonnerName = await sumonerNam(req.body.sumonnerName);
-      console.log(sumonnerName);
-      if (sumonnerName != "") {
-        const user = new User({
-          email: req.body.email,
-          username: req.body.username,
-          password: req.body.password,
-          userImage: req.file.path,
-          sumonnerName: req.body.sumonnerName
-        });
-        await user.save();
-        const token = await user.generateAuthToken();
-        res.status(201).send({ user, token });
-      } else {
+      /*   let sumonnerName = await sumonerNam(req.body.sumonnerName); */
+      /*    console.log(sumonnerName); */
+      /*  if (sumonnerName != "") { */
+      const user = new User({
+        email: req.body.email,
+        username: req.body.username,
+        password: req.body.password,
+        /*   userImage: req.file.path, */
+        /*    sumonnerName: req.body.sumonnerName, */
+      });
+      await user.save();
+      const token = await user.generateAuthToken();
+      res.status(201).send({ user, token });
+      /*   } else {
         res.status(400).send(error);
-      }
+      } */
     } catch (error) {
       res.status(400).send(error);
     }
@@ -74,7 +75,7 @@ router.get("/users/me", auth, async (req, res) => {
 router.post("/users/me/logout", auth, async (req, res) => {
   // Log user out of the application
   try {
-    req.user.tokens = req.user.tokens.filter(token => {
+    req.user.tokens = req.user.tokens.filter((token) => {
       return token.token != req.token;
     });
     await req.user.save();
@@ -113,23 +114,23 @@ router.put("/users/me/desactivate", auth, async (req, res) => {
 });
 
 /* let startTime = new Date(Date.now() + 1000);
-let startTime2 = new Date(Date.now() + 15000); */
+let startTime2 = new Date(Date.now() + 15000);
 
-/* let dates = [startTime, startTime2];
+let dates = [startTime, startTime2];
 date = new Date(Date.now() + 5000);
-var q = schedule.scheduleJob(date, function() {
-  let matchs = await Match.find({
-    DateStart: { $gte: new Date(Date.now()) }
+var q = schedule.scheduleJob(date, function () {
+  let matchs = Match.find({
+    DateStart: { $gte: new Date(Date.now()) },
   });
-  dates = []
-  matchs.forEach(element=>{
+  dates = [];
+  matchs.forEach((element) => {
     dates.push(element.DateStart);
-  })
-  dates.forEach(element => {
+  });
+  dates.forEach((element) => {
     let endTime = new Date(element.getTime() + 5000);
     var j = schedule.scheduleJob(
       { start: element, end: endTime, rule: "/1 * * * * *" },
-      function() {
+      function () {
         console.log("test");
       }
     );
@@ -137,11 +138,11 @@ var q = schedule.scheduleJob(date, function() {
 });
 let x = "avant";
 
-dates.forEach(element => {
+dates.forEach((element) => {
   let endTime = new Date(element.getTime() + 5000);
   var j = schedule.scheduleJob(
     { start: element, end: endTime, rule: "/1 * * * * *" },
-    function() {
+    function () {
       console.log("test");
     }
   );

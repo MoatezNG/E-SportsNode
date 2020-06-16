@@ -17,12 +17,12 @@ router.post(
     const team = new Team({
       teamName: req.body.teamName,
       teamLeader: req.user,
-      teamImage: req.file.path
+      teamImage: req.file.path,
     });
     const savedTeam = await team.save();
     const updatedUser = await User.updateOne(
       { _id: team.teamLeader._id },
-      { $set: { role: User.roleEnum.TeamLeader } }
+      { $set: { role: User.roleEnum.TeamLeader, team: team._id } }
     );
     res.json(savedTeam);
   }

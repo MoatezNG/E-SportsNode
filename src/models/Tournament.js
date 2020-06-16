@@ -2,29 +2,35 @@ const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
 const TournamentSchema = mongoose.Schema({
+  tournamentAdmin: { type: Schema.Types.ObjectId, ref: "User" },
   tournamentName: {
-    type: String
+    type: String,
+    required: true,
   },
   tournamentPicture: {
     type: String,
-    required: true
+    required: false,
   },
   numberOfTeams: {
-    type: Number
+    type: Number,
   },
+  teamsParticiping: [{ type: Schema.Types.ObjectId, ref: "Team" }],
   teams: [{ type: Schema.Types.ObjectId, ref: "Team" }],
   matchs: [{ type: Schema.Types.ObjectId, ref: "Match" }],
-  dateSeixiemeFinale: {
-    type: Date
+  dateRound0: {
+    type: Date,
   },
-  dateQuartFinale: {
-    type: Date
+  dateRound1: {
+    type: Date,
   },
-  dateDemiFinale: {
-    type: Date
+  dateRound2: {
+    type: Date,
   },
-  dateFinale: {
-    type: Date
-  }
+  dateRound3: {
+    type: Date,
+  },
+  description: {
+    type: String,
+  },
 });
 module.exports = mongoose.model("Tournament", TournamentSchema);
